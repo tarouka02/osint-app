@@ -1,15 +1,30 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>IP Lookup Result</title>
-</head>
+<head><title>IP Lookup Result</title></head>
 <body>
     <h1>Results for {{ ip }}</h1>
+
+    <h2>🌐 IPinfo Data</h2>
     <ul>
-        {% for key, value in data.items() %}
+        {% for key, value in ipinfo.items() %}
             <li><strong>{{ key }}:</strong> {{ value }}</li>
         {% endfor %}
     </ul>
+
+    <h2>🚨 AbuseIPDB Reputation</h2>
+    {% if abuse.error %}
+        <p style="color: red;">{{ abuse.error }}</p>
+    {% else %}
+        <ul>
+            <li><strong>Abuse Score:</strong> {{ abuse.abuseConfidenceScore }}%</li>
+            <li><strong>Total Reports:</strong> {{ abuse.totalReports }}</li>
+            <li><strong>Last Reported:</strong> {{ abuse.lastReportedAt or 'N/A' }}</li>
+            <li><strong>Country:</strong> {{ abuse.countryCode }}</li>
+            <li><strong>Usage Type:</strong> {{ abuse.usageType or 'Unknown' }}</li>
+        </ul>
+    {% endif %}
+
     <a href="/">← Back</a>
 </body>
 </html>
+
