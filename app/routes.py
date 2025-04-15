@@ -67,6 +67,26 @@ def lookup():
         hostnames = ["Error: Shodan lookup failed"]
     print("Shodan Response:", shodan_resp.text)
 
+        ### --- Risk Scoring Logic --- ###
+    try:
+        abuse_score = int(abuse_data.get("abuseConfidenceScore", 0))
+        vt_malicious = int(malicious_votes)
+        num_ports = len(open_ports)
+    except:
+        abuse_score = vt_malicious = num_ports = 0
+
+    score = abuse_score + (vt_malicious * 3) + (num_ports * 2)
+
+    if score >= 80:
+        risk_level = "High"
+        color = "red"
+    elif score >= 40:
+        risk_level = "Medium"
+        color = "orange"
+    else:
+        risk_level = "Low"
+        color = "green"
+
 
     return render_template(
         'result.html',
@@ -80,7 +100,10 @@ def lookup():
         org=org,
         isp=isp,
         hostnames=hostnames,
-        country=country
+        country=country,
+        risk_level=risk_level,
+        risk_color=color
     )
+
 
 
