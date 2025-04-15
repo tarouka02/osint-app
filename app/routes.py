@@ -7,6 +7,7 @@ IPINFO_TOKEN = "ed00c49c853ba0"
 ABUSEIPDB_KEY = "c9e3012fcd0f78b34d661a02a1dd6f9afa70a059962d31fa6a129fdd6ed98048335a4cbce25a9799"
 VIRUSTOTAL_KEY = "09ade77eb4a2776b84fa4e66a293ee33b3b013c40fff003685fa236456d0ca35"
 SHODAN_KEY = "HgVMSbmIyUYe0y8gRrJ9p3XYTLgmikU1"
+
 @main.route('/')
 def index():
     return render_template('index.html')
@@ -23,6 +24,9 @@ def lookup():
     if ipinfo_resp.status_code != 200:
         return render_template('index.html', error="IPinfo API failed.")
     ipinfo_data = ipinfo_resp.json()
+    loc = ipinfo_data.get("loc", "")
+    latitude, longitude = (loc.split(",") if loc else ("", ""))
+
 
     ### --- AbuseIPDB --- ###
     abuse_headers = {
@@ -102,8 +106,11 @@ def lookup():
         hostnames=hostnames,
         country=country,
         risk_level=risk_level,
-        risk_color=color
+        risk_color=color,
+        latitude=latitude,
+        longitude=longitude
     )
+
 
 
 

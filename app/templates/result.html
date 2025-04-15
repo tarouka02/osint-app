@@ -76,5 +76,31 @@
     </div>
 </div>
 
+<!-- 🌍 Leaflet Map -->
+<div class="container mt-5">
+    <h5 class="mb-3">🗺️ IP Geolocation Map</h5>
+    <div id="map" style="height: 400px;"></div>
+</div>
+
+<!-- Leaflet.js CDN -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+<script>
+    const lat = {{ latitude }};
+    const lon = {{ longitude }};
+
+    const map = L.map('map').setView([lat, lon], 10);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lon]).addTo(map)
+        .bindPopup("{{ ip }} location")
+        .openPopup();
+</script>
+
+
 </body>
 </html>
