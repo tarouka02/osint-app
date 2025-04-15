@@ -100,15 +100,15 @@ def show_results():
         if abuse_conf >= 85:
             abuse_level = "High"
             abuse_color = "danger"
-            abuse_summary = "🚫 This IP has a very high abuse confidence score. Likely involved in malicious activity."
+            abuse_summary = " This IP has a very high abuse confidence score. Likely involved in malicious activity."
         elif abuse_conf >= 40:
             abuse_level = "Medium"
             abuse_color = "warning"
-            abuse_summary = "⚠️ This IP has a moderate abuse score. May have been used for suspicious activity."
+            abuse_summary = " This IP has a moderate abuse score. May have been used for suspicious activity."
         else:
             abuse_level = "Low"
             abuse_color = "success"
-            abuse_summary = "✅ This IP has a low abuse score and is likely safe."
+            abuse_summary = " This IP has a low abuse score and is likely safe."
         vt_malicious = int(malicious_votes)
         num_ports = len(open_ports)
     except:
@@ -141,6 +141,7 @@ def show_results():
         country=country,
         risk_level=risk_level,
         risk_color=color,
+        score=score,
         abuse_level=abuse_level,
         abuse_color=abuse_color,
         abuse_summary=abuse_summary,
