@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>OSINT Intelligence Platform</title>
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     /* === Global Reset === */
@@ -22,6 +24,22 @@
       flex-direction: column;
       justify-content: center;
     }
+
+    .bg-dark-subtle {
+    background-color: #1f4882;
+    border: 1px solid #30363d;
+    color: #949faa !important; /* 🧠 force light text */
+    }
+
+    .bg-dark-subtle h5 {
+    color: #58a6ff; /* or pick per-API color */
+    }
+
+    .bg-dark-subtle p {
+    color: #011e3b;
+    }
+
+
 
     .container {
       max-width: 900px;
@@ -92,11 +110,14 @@
     }
   </style>
 </head>
-<body>
 
+<body>
 <div class="container">
-  <h1>🕵️ OSINT IP Intelligence Platform</h1>
-  <p>
+    <h1>
+        <span id="typed-text" class="text-primary"></span>
+    </h1>      
+
+    <p>
     Investigate IPs using real-time data from trusted intelligence sources.
     Analyze open ports, geolocation, abuse history, threat scores, and exposed services — in one scan.
   </p>
@@ -122,10 +143,104 @@
     <span class="badge">🌍 IPinfo</span>
   </div>
 
+  <div class="container mt-5 pt-5">
+    <h2 class="text-center mb-5" style="color:#58a6ff;">⚙ How This OSINT Engine Works</h2>
+  
+    <div class="row g-4">
+      <div class="col-md-6" data-aos="fade-up">
+        <div class="p-4 border rounded bg-dark-subtle h-100">
+          <h5 class="text-info">🌍 IPinfo Lookup</h5>
+          <p>We analyze geolocation, organization, ASN, and time zone to give you full visibility into the origin of the IP.</p>
+        </div>
+      </div>
+  
+      <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="p-4 border rounded bg-dark-subtle h-100">
+          <h5 class="text-success">🧪 VirusTotal Scan</h5>
+          <p>We query threat intelligence engines to check if the IP is associated with malware, phishing, or suspicious activity.</p>
+        </div>
+      </div>
+  
+      <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
+        <div class="p-4 border rounded bg-dark-subtle h-100">
+          <h5 class="text-warning">📡 Shodan Integration</h5>
+          <p>We retrieve exposed services, open ports, and hostnames to understand how the IP is behaving online.</p>
+        </div>
+      </div>
+  
+      <div class="col-md-6" data-aos="fade-up" data-aos-delay="600">
+        <div class="p-4 border rounded bg-dark-subtle h-100">
+          <h5 class="text-danger">🚨 AbuseIPDB Check</h5>
+          <p>We analyze abuse confidence, number of reports, and last seen date to assess IP reputation and potential danger.</p>
+        </div>
+      </div>
+    </div>
+  
+    <div class="text-center mt-5" data-aos="zoom-in-up" data-aos-delay="800">
+      <p class="text-muted fst-italic">No IP is safe from this scanner. This isn’t just a lookup tool — it’s a full-scale threat profiling engine.</p>
+    </div>
+  </div>
+
+  <!-- 🔥 Real-time Stats -->
+<div class="container mt-5 pt-3">
+    <div class="row text-center" data-aos="fade-up" data-aos-delay="700">
+      <div class="col-md-6">
+        <h2><span id="scanCount">0</span>+</h2>
+        <p class="text-muted">IPs Scanned</p>
+      </div>
+      <div class="col-md-6">
+        <h2>4</h2>
+        <p class="text-muted">Threat Feeds Connected</p>
+      </div>
+    </div>
+  </div>
+  
+  
+
   <div class="subnote">
     Trusted by researchers and analysts. No data stored. 100% passive.
   </div>
 </div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 900, once: true });
+</script>
+
+<script>
+    const options = {
+      strings: [
+        "OSINT IP Intelligence Platform",
+        "Analyzing Threats in Real-Time...",
+        "Attribution. Exposure. Detection.",
+        "Powered by VirusTotal, Shodan, and More"
+      ],
+      typeSpeed: 45,
+      backSpeed: 30,
+      backDelay: 1500,
+      loop: true,
+      smartBackspace: true,
+    };
+    const typed = new Typed('#typed-text', options);
+  </script>
+
+<script>
+    function animateCount(id, target, speed = 10) {
+      let el = document.getElementById(id);
+      let count = 0;
+      let interval = setInterval(() => {
+        count++;
+        el.innerText = count;
+        if (count >= target) clearInterval(interval);
+      }, speed);
+    }
+  
+    window.onload = function() {
+      animateCount("scanCount", 6120, 1);
+    };
+  </script>
+
+  
 
 </body>
 </html>
