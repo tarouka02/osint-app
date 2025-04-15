@@ -81,6 +81,7 @@ flask run
 ```
 
 ### 5. Project Structure
+```bash
 osint-intel-platform/
 ├── static/
 │   └── styles.css, scripts/
@@ -89,6 +90,7 @@ osint-intel-platform/
 │   ├── loading.html
 │   └── result.html
 ├── app.py or routes.py
+```
 ├── requirements.txt
 └── README.md
 
