@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, session, redirect, url_for
 from datetime import datetime, timezone
 import requests
 
@@ -18,6 +18,23 @@ def lookup():
     ip = request.form.get('ip')
     if not ip:
         return render_template('index.html', error="Please enter an IP address.")
+    
+    session['ip'] = ip  # Store IP in session for later
+    return redirect(url_for('main.show_loader', source='ipinfo'))  # show loading screen
+    
+
+@main.route("/loading/<source>")
+def show_loader(source):
+    ip = session.get("ip") or "Unknown IP"
+    next_url = url_for("main.show_results")
+    return render_template("loading.html", ip=ip, source=source.capitalize(), next_url=next_url)
+
+
+@main.route('/results')
+def show_results():
+    ip = session.get('ip')
+    if not ip:
+        return redirect(url_for('main.index'))
 
     ### --- IPinfo --- ###
     ipinfo_url = f"https://ipinfo.io/{ip}?token={IPINFO_TOKEN}"
@@ -28,7 +45,6 @@ def lookup():
     loc = ipinfo_data.get("loc", "")
     latitude, longitude = (loc.split(",") if loc else ("", ""))
 
-
     ### --- AbuseIPDB --- ###
     abuse_headers = {
         'Key': ABUSEIPDB_KEY,
@@ -37,9 +53,7 @@ def lookup():
     abuse_url = f"https://api.abuseipdb.com/api/v2/check?ipAddress={ip}&maxAgeInDays=90"
     abuse_resp = requests.get(abuse_url, headers=abuse_headers)
     abuse_data = abuse_resp.json().get('data', {}) if abuse_resp.status_code == 200 else {"error": "AbuseIPDB failed"}
-    
-    
-    # Format last reported timestamp (optional)
+
     raw_timestamp = abuse_data.get("lastReportedAt")
     if raw_timestamp:
         try:
@@ -51,14 +65,10 @@ def lookup():
     else:
         abuse_data["lastSeenDaysAgo"] = "N/A"
 
-
     ### --- VirusTotal --- ###
-    vt_headers = {
-        "x-apikey": VIRUSTOTAL_KEY
-    }
+    vt_headers = {"x-apikey": VIRUSTOTAL_KEY}
     vt_url = f"https://www.virustotal.com/api/v3/ip_addresses/{ip}"
     vt_resp = requests.get(vt_url, headers=vt_headers)
-
     if vt_resp.status_code == 200:
         vt_data = vt_resp.json().get("data", {}).get("attributes", {})
         malicious_votes = vt_data.get("last_analysis_stats", {}).get("malicious", 0)
@@ -71,7 +81,6 @@ def lookup():
     ### --- Shodan --- ###
     shodan_url = f"https://api.shodan.io/shodan/host/{ip}?key={SHODAN_KEY}"
     shodan_resp = requests.get(shodan_url)
-
     if shodan_resp.status_code == 200:
         shodan_data = shodan_resp.json()
         open_ports = shodan_data.get("ports", [])
@@ -83,13 +92,11 @@ def lookup():
         open_ports = []
         org = isp = country = "N/A"
         hostnames = ["Error: Shodan lookup failed"]
-    print("Shodan Response:", shodan_resp.text)
 
-        ### --- Risk Scoring Logic --- ###
+    ### --- Risk Scoring --- ###
     try:
         abuse_score = int(abuse_data.get("abuseConfidenceScore", 0))
-        abuse_conf = int(abuse_data.get("abuseConfidenceScore", 0))
-
+        abuse_conf = abuse_score
         if abuse_conf >= 85:
             abuse_level = "High"
             abuse_color = "danger"
@@ -102,9 +109,6 @@ def lookup():
             abuse_level = "Low"
             abuse_color = "success"
             abuse_summary = "✅ This IP has a low abuse score and is likely safe."
-
-        # Add to render_template
-
         vt_malicious = int(malicious_votes)
         num_ports = len(open_ports)
     except:
@@ -122,7 +126,6 @@ def lookup():
         risk_level = "Low"
         color = "green"
 
-
     return render_template(
         'result.html',
         ip=ip,
@@ -138,12 +141,13 @@ def lookup():
         country=country,
         risk_level=risk_level,
         risk_color=color,
-        buse_level=abuse_level,
+        abuse_level=abuse_level,
         abuse_color=abuse_color,
         abuse_summary=abuse_summary,
         latitude=latitude,
         longitude=longitude
     )
+
 
 
 
