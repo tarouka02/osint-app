@@ -54,21 +54,31 @@ cd osint-intel-platform
 ### 2. Create and activate a virtual environment
 
 # Create virtual environment
+```bash
 python -m venv venv
+```
 
 # Activate (choose the appropriate command for your OS)
 # Windows (PowerShell)
+```bash
 .\venv\Scripts\Activate
+```
 
 # macOS/Linux
+```bash
 source venv/bin/activate
+```
 
 ### 3. Install dependencies
+```bash
 pip install flask requests
+```
 
 ### 4. Run the App
 # Ensure you're in the venv and in the project directory
+```bash
 flask run
+```
 
 ### 5. Project Structure
 osint-intel-platform/
