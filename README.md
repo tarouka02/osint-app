@@ -53,18 +53,17 @@ cd osint-intel-platform
 
 ### 2. Create and activate a virtual environment
 
-# Create virtual environment
+#### Create virtual environment
 ```bash
 python -m venv venv
 ```
 
-# Activate (choose the appropriate command for your OS)
-# Windows (PowerShell)
+#### Windows (PowerShell)
 ```bash
 .\venv\Scripts\Activate
 ```
 
-# macOS/Linux
+#### macOS/Linux
 ```bash
 source venv/bin/activate
 ```
@@ -75,7 +74,6 @@ pip install flask requests
 ```
 
 ### 4. Run the App
-# Ensure you're in the venv and in the project directory
 ```bash
 flask run
 ```
