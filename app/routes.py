@@ -6,7 +6,7 @@ main = Blueprint('main', __name__)
 IPINFO_TOKEN = "ed00c49c853ba0"
 ABUSEIPDB_KEY = "c9e3012fcd0f78b34d661a02a1dd6f9afa70a059962d31fa6a129fdd6ed98048335a4cbce25a9799"
 VIRUSTOTAL_KEY = "09ade77eb4a2776b84fa4e66a293ee33b3b013c40fff003685fa236456d0ca35"
-
+SHODAN_KEY = "HgVMSbmIyUYe0y8gRrJ9p3XYTLgmikU1"
 @main.route('/')
 def index():
     return render_template('index.html')
@@ -34,7 +34,7 @@ def lookup():
     abuse_data = abuse_resp.json().get('data', {}) if abuse_resp.status_code == 200 else {"error": "AbuseIPDB failed"}
 
 
-        ### --- VirusTotal --- ###
+    ### --- VirusTotal --- ###
     vt_headers = {
         "x-apikey": VIRUSTOTAL_KEY
     }
@@ -49,8 +49,38 @@ def lookup():
     else:
         vt_data = {}
         malicious_votes = harmless_votes = suspicious_votes = "?"
-        
-    return render_template('result.html', ip=ip, ipinfo=ipinfo_data,
-                    abuse=abuse_data, malicious_votes=malicious_votes,
-                    harmless_votes=harmless_votes, suspicious_votes=suspicious_votes)
+
+    ### --- Shodan --- ###
+    shodan_url = f"https://api.shodan.io/shodan/host/{ip}?key={SHODAN_KEY}"
+    shodan_resp = requests.get(shodan_url)
+
+    if shodan_resp.status_code == 200:
+        shodan_data = shodan_resp.json()
+        open_ports = shodan_data.get("ports", [])
+        org = shodan_data.get("org", "N/A")
+        isp = shodan_data.get("isp", "N/A")
+        hostnames = shodan_data.get("hostnames", [])
+        country = shodan_data.get("country_name", "Unknown")
+    else:
+        open_ports = []
+        org = isp = country = "N/A"
+        hostnames = ["Error: Shodan lookup failed"]
+    print("Shodan Response:", shodan_resp.text)
+
+
+    return render_template(
+        'result.html',
+        ip=ip,
+        ipinfo=ipinfo_data,
+        abuse=abuse_data,
+        malicious_votes=malicious_votes,
+        harmless_votes=harmless_votes,
+        suspicious_votes=suspicious_votes,
+        open_ports=open_ports,
+        org=org,
+        isp=isp,
+        hostnames=hostnames,
+        country=country
+    )
+
 

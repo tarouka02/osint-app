@@ -31,6 +31,16 @@
         <li><strong>Harmless:</strong> {{ harmless_votes }}</li>
     </ul>
 
+    <h2>🔍 Shodan Scan</h2>
+    <ul>
+        <li><strong>Organization:</strong> {{ org }}</li>
+        <li><strong>ISP:</strong> {{ isp }}</li>
+        <li><strong>Country:</strong> {{ country }}</li>
+        <li><strong>Hostnames:</strong> {{ hostnames|join(", ") }}</li>
+        <li><strong>Open Ports:</strong> {{ open_ports|join(", ") }}</li>
+    </ul>
+
+
 
     <a href="/">← Back</a>
 </body>
