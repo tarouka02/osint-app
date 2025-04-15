@@ -44,7 +44,7 @@
     }
   </style>
 
-  <script>
+<script>
     const messages = [
       "Initializing OSINT engine...",
       "Querying {{ source }} database...",
@@ -60,14 +60,22 @@
         setTimeout(updateText, 800);
       }
     }
-    setTimeout(() => {
-      window.location.href = "{{ next_url }}";
-    }, 3500);  // Update this to control how long it stays
-
-    window.onload = updateText;
+  
+    window.onload = () => {
+      updateText();
+      setTimeout(() => {
+        document.body.style.transition = "opacity 0.8s ease";
+        document.body.style.opacity = 0;
+  
+        setTimeout(() => {
+          window.location.href = "{{ next_url }}";
+        }, 800); // Wait for fade to complete
+      }, 3200); // Show animation for 3.2s then start fading out
+    };
   </script>
+  
 </head>
-<body>
+<body style="opacity: 1;">
   <div class="dots">
     <div class="dot"></div>
     <div class="dot"></div>
