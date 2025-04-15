@@ -90,8 +90,9 @@ osint-intel-platform/
 │   ├── loading.html
 │   └── result.html
 ├── app.py or routes.py
-```
 ├── requirements.txt
 └── README.md
+```
+
 
 
