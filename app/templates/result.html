@@ -33,16 +33,29 @@
                 {% if abuse.error %}
                     <p class="text-danger">{{ abuse.error }}</p>
                 {% else %}
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Abuse Score: {{ abuse.abuseConfidenceScore }}%</li>
-                        <li class="list-group-item">Total Reports: {{ abuse.totalReports }}</li>
-                        <li class="list-group-item">Last Reported: {{ abuse.lastReportedAt or 'N/A' }}</li>
-                        <li class="list-group-item">Country: {{ abuse.countryCode }}</li>
-                        <li class="list-group-item">Usage Type: {{ abuse.usageType or 'Unknown' }}</li>
+                    <div class="mb-2">
+                        <span class="badge bg-{{ abuse_color }}">
+                            Abuse Score: {{ abuse.abuseConfidenceScore }}% ({{ abuse_level }} Risk)
+                        </span>
+                        <p class="mt-2">{{ abuse_summary }}</p>
+                        <div class="progress mt-2" style="height: 20px;">
+                            <div class="progress-bar bg-{{ abuse_color }}" role="progressbar"
+                                style="width: {{ abuse.abuseConfidenceScore }}%;">
+                                {{ abuse.abuseConfidenceScore }}%
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush mt-3">
+                        <li class="list-group-item"><strong>Total Reports:</strong> {{ abuse.totalReports }}</li>
+                        <li class="list-group-item"><strong>Last Reported:</strong> {{ abuse.lastSeenDaysAgo }}</li>
+                        <li class="list-group-item"><strong>Country:</strong> {{ abuse.countryCode }}</li>
+                        <li class="list-group-item"><strong>Usage Type:</strong> {{ abuse.usageType or 'Unknown' }}</li>
                     </ul>
                 {% endif %}
             </div>
         </div>
+
+        
 
         <!-- VirusTotal -->
         <div class="col-md-6">

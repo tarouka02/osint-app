@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+from datetime import datetime, timezone
 import requests
 
 main = Blueprint('main', __name__)
@@ -36,6 +37,19 @@ def lookup():
     abuse_url = f"https://api.abuseipdb.com/api/v2/check?ipAddress={ip}&maxAgeInDays=90"
     abuse_resp = requests.get(abuse_url, headers=abuse_headers)
     abuse_data = abuse_resp.json().get('data', {}) if abuse_resp.status_code == 200 else {"error": "AbuseIPDB failed"}
+    
+    
+    # Format last reported timestamp (optional)
+    raw_timestamp = abuse_data.get("lastReportedAt")
+    if raw_timestamp:
+        try:
+            last_reported = datetime.fromisoformat(raw_timestamp.replace("Z", "+00:00"))
+            delta_days = (datetime.now(timezone.utc) - last_reported).days
+            abuse_data["lastSeenDaysAgo"] = f"{delta_days} day(s) ago"
+        except:
+            abuse_data["lastSeenDaysAgo"] = "Unknown"
+    else:
+        abuse_data["lastSeenDaysAgo"] = "N/A"
 
 
     ### --- VirusTotal --- ###
@@ -74,6 +88,23 @@ def lookup():
         ### --- Risk Scoring Logic --- ###
     try:
         abuse_score = int(abuse_data.get("abuseConfidenceScore", 0))
+        abuse_conf = int(abuse_data.get("abuseConfidenceScore", 0))
+
+        if abuse_conf >= 85:
+            abuse_level = "High"
+            abuse_color = "danger"
+            abuse_summary = "🚫 This IP has a very high abuse confidence score. Likely involved in malicious activity."
+        elif abuse_conf >= 40:
+            abuse_level = "Medium"
+            abuse_color = "warning"
+            abuse_summary = "⚠️ This IP has a moderate abuse score. May have been used for suspicious activity."
+        else:
+            abuse_level = "Low"
+            abuse_color = "success"
+            abuse_summary = "✅ This IP has a low abuse score and is likely safe."
+
+        # Add to render_template
+
         vt_malicious = int(malicious_votes)
         num_ports = len(open_ports)
     except:
@@ -107,6 +138,9 @@ def lookup():
         country=country,
         risk_level=risk_level,
         risk_color=color,
+        buse_level=abuse_level,
+        abuse_color=abuse_color,
+        abuse_summary=abuse_summary,
         latitude=latitude,
         longitude=longitude
     )
