@@ -47,8 +47,8 @@ A modern web application built with Flask for Open Source Intelligence (OSINT) I
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/osint-intel-platform.git
-cd osint-intel-platform
+git clone https://github.com/tarouka02/osint-app.git
+cd osint-app
 ```
 
 ### 2. Create and activate a virtual environment
